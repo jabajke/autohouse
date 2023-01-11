@@ -7,22 +7,26 @@ from django_countries.fields import CountryField
 from .validators import CharacteristicJSONValidationSchema
 from .schemas import EnumSchemas
 
+class CommonInfo(models.Model):
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
-class Autohouse(models.Model):
+    class Meta:
+        abstract = True
+
+
+class Autohouse(CommonInfo):
     title = models.CharField(max_length=255)
     location = CountryField()
     prefer_characteristic = models.ManyToManyField('Characteristic')
-    is_active = models.BooleanField(default=True)
 
-
-class Auto(models.Model):
+class Car(CommonInfo):
     characteristic = models.ForeignKey('Characteristic', on_delete=models.CASCADE)
     price = models.DecimalField(decimal_places=2, max_digits=10,
                                 validators=[MinValueValidator(limit_value=1.00)])
-    is_active = models.BooleanField(default=True)
 
-
-class Characteristic(models.Model):
+class Characteristic(CommonInfo):
     title = models.JSONField(validators=[CharacteristicJSONValidationSchema(
         limit_value=EnumSchemas.CHARACTERISTIC_SCHEMA.value
     )])
