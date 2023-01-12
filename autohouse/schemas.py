@@ -7,11 +7,18 @@ class EnumSchemas(enum.Enum):
         "type": "object",
         "properties": {
             "brand": {"type": "string"},
+            "model": {"type": "string"},
+            "horse_power": {
+                "type": "integer",
+                "minimum": 1
+            },
             "color": {"type": "string"},
             "year_of_issue": {
-                "type": "string",
-                "format": "date"
+                "type": "integer",
+                "minimum": 1800,
             },
-            "type_of_transmission": {"type": "string"}
+            "transmission_type": {"type": "string"},
+            "body-type": {"type": "string"},
+            "price": {"type": "number"},
         },
     }

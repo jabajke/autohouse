@@ -1,11 +1,13 @@
+from datetime import datetime
+
 from django.db import models
-from django.core.validators import MinValueValidator
-from django.contrib.postgres.fields import ArrayField
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from django_countries.fields import CountryField
 
 from .validators import CharacteristicJSONValidationSchema
 from .schemas import EnumSchemas
+
 
 class CommonInfo(models.Model):
     is_active = models.BooleanField(default=True)
@@ -19,17 +21,26 @@ class CommonInfo(models.Model):
 class Autohouse(CommonInfo):
     title = models.CharField(max_length=255)
     location = CountryField()
-    prefer_characteristic = models.ManyToManyField('Characteristic')
+    prefer_characteristic = models.JSONField(validators=[CharacteristicJSONValidationSchema(
+        limit_value=EnumSchemas.CHARACTERISTIC_SCHEMA.value
+    )], null=True)
+
+    def __str__(self):
+        return self.title
+
 
 class Car(CommonInfo):
-    characteristic = models.ForeignKey('Characteristic', on_delete=models.CASCADE)
+    brand = models.CharField(max_length=50)
+    model = models.CharField(max_length=50)
+    horse_power = models.PositiveSmallIntegerField()
+    color = models.CharField(max_length=50)
+    year_of_issue = models.PositiveSmallIntegerField(validators=[
+        MinValueValidator(1800), MaxValueValidator(datetime.now().year)
+    ], help_text="Use <YYYY> as date format")
+    transmission_type = models.CharField(max_length=50)
+    body_type = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10,
                                 validators=[MinValueValidator(limit_value=1.00)])
 
-class Characteristic(CommonInfo):
-    title = models.JSONField(validators=[CharacteristicJSONValidationSchema(
-        limit_value=EnumSchemas.CHARACTERISTIC_SCHEMA.value
-    )])
-
     def __str__(self):
-        return self.title['brand']
+        return '{} | {}'.format(self.brand, self.model)
