@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_countries',
     'djoser',
+    'rest_framework_simplejwt.token_blacklist',
 
     # project apps
     'authentication.apps.AuthenticationConfig',

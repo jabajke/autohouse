@@ -80,34 +80,6 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
         fields = ['payload']
 
 
-class LoginSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=255)
-    password = serializers.CharField(max_length=555, write_only=True)
-    access = serializers.CharField(max_length=555, read_only=True)
-    refresh = serializers.CharField(max_length=555, read_only=True)
-
-    class Meta:
-        model = User
-        fields = ['email', 'password', 'refresh', 'access']
-
-    def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
-
-        user = authenticate(email=email, password=password)
-
-        if not user:
-            raise exceptions.AuthenticationFailed('Invalid credentials provided')
-        if not user.is_active:
-            raise exceptions.AuthenticationFailed('You must activate your account')
-
-        return {
-            'email': user.email,
-            'refresh': user.refresh(),
-            'access': user.access(),
-        }
-
-
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField(max_length=555)
 

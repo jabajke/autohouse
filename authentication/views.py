@@ -1,11 +1,11 @@
 import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from rest_framework import generics, status
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
-from .serializers import (EmailVerificationSerializer, RegistrationSerializer,
-                          UserSerializer)
+from .serializers import (EmailVerificationSerializer, LogoutSerializer,
+                          RegistrationSerializer, UserSerializer)
 
 User = get_user_model()
 
@@ -25,7 +25,8 @@ class EmailVerifyAPIView(generics.RetrieveAPIView):
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(data=payload)
+            user_id = payload['user_id']
+            serializer.save(user_id=user_id)
 
             return Response({
                 'email': 'Successfully activated!'
@@ -36,3 +37,14 @@ class EmailVerifyAPIView(generics.RetrieveAPIView):
 
         except jwt.DecodeError:
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutAPIView(generics.GenericAPIView):
+    serializer_class = LogoutSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
