@@ -11,6 +11,9 @@ psycopg2 = "*"
 psycopg2-binary = "*"
 django-countries = "*"
 jsonschema = "*"
+flake8 = "*"
+flake8-import-order = "*"
+flake8-isort = "*"
 
 [dev-packages]
 
