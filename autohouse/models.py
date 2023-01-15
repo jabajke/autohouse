@@ -30,6 +30,11 @@ class Autohouse(CommonInfo):
 
 
 class Car(CommonInfo):
+    TRANSMISSION_CHOICES = [
+        ('manual', 'manual'),
+        ('automatic', 'automatic'),
+        ('cvt', 'cvt')
+    ]
     brand = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
     horse_power = models.PositiveSmallIntegerField()
@@ -37,7 +42,9 @@ class Car(CommonInfo):
     year_of_issue = models.PositiveSmallIntegerField(validators=[
         MinValueValidator(1800), MaxValueValidator(datetime.now().year)
     ], help_text="Use <YYYY> as date format")
-    transmission_type = models.CharField(max_length=50)
+    transmission_type = models.CharField(
+        choices=TRANSMISSION_CHOICES, max_length=50
+    )
     body_type = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10,
                                 validators=[MinValueValidator(limit_value=1.00)])
