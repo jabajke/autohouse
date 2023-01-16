@@ -5,7 +5,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from .serializers import (EmailVerificationSerializer, LogoutSerializer,
-                          RegistrationSerializer, UserSerializer)
+                          RegistrationSerializer)
 
 User = get_user_model()
 
@@ -20,7 +20,7 @@ class EmailVerifyAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
 
     def get(self, request, *args, **kwargs):
-        token = request.GET.get('token')
+        token = request.query_params.get('token')
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
             serializer = self.get_serializer(data=request.data)
