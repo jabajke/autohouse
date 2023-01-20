@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_countries',
     'djoser',
+    'rest_framework_simplejwt.token_blacklist',
 
     # project apps
     'authentication.apps.AuthenticationConfig',
@@ -173,3 +174,8 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+
+EMAIL_HOST='mailhog'
+EMAIL_PORT='1025'
+

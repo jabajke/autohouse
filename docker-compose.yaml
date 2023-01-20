@@ -5,7 +5,7 @@ services:
   web:
     build: .
     volumes:
-      - /usr/src/app
+      - .:/usr/src/app
     env_file:
       - .env
     command: >
@@ -30,6 +30,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    logging:
+      driver: 'none'
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
 
 volumes:
   pgdata:
