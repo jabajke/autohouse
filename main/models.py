@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
@@ -55,7 +53,7 @@ class Car(CommonInfo):
     horse_power = models.PositiveSmallIntegerField()
     color = models.CharField(max_length=50)
     year_of_issue = models.PositiveSmallIntegerField(validators=[
-        MinValueValidator(1800), MaxValueValidator(datetime.now().year)
+        MinValueValidator(1800), MaxValueValidator(main_util.current_year)
     ], help_text="Use <YYYY> as date format")
     transmission_type = models.CharField(
         choices=TRANSMISSION_CHOICES, max_length=50
