@@ -16,3 +16,11 @@ class Autohouse(CommonInfo):
 
     def __str__(self):
         return self.title
+
+
+class AutohouseDiscount(CommonDiscount):
+    autohouse = models.ForeignKey(Autohouse, on_delete=models.SET_NULL, null=True)
+
+
+class AutohouseCar(CommonCarInfo):
+    autohouse = models.ForeignKey(Autohouse, on_delete=models.SET_NULL, null=True)
