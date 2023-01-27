@@ -1,8 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
-from django.core.validators import MinValueValidator, MaxValueValidator
+
+from .utils import Util as main_util
 
 
 class CommonInfo(models.Model):
@@ -12,7 +14,6 @@ class CommonInfo(models.Model):
 
     class Meta:
         abstract = True
-
 
 
 class CommonCarInfo(CommonInfo):
@@ -37,7 +38,7 @@ class CommonDiscount(CommonInfo):
     title = models.CharField(max_length=255, null=True)
     description = models.TextField(null=True)
     start_date = models.DateTimeField(default=timezone.now)
-    end_date = models.DateTimeField(default=timezone.now() + timedelta(days=7))
+    end_date = models.DateTimeField(default=main_util.default_end_date)
 
     class Meta:
         abstract = True
