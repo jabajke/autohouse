@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     # project apps
     'authentication.apps.AuthenticationConfig',
     'autohouse.apps.AutohouseConfig',
+    'supplier.apps.SupplierConfig',
+    'customer.apps.CustomerConfig',
+    'main.apps.MainConfig'
 
 ]
 
