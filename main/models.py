@@ -64,3 +64,14 @@ class Car(CommonInfo):
 
     def __str__(self):
         return '{} | {}'.format(self.brand, self.model)
+
+
+class PurchaseHistory(CommonInfo):
+    autohouse = models.ForeignKey('autohouse.Autohouse', on_delete=models.SET_NULL, null=True)
+    price = models.DecimalField(decimal_places=2, max_digits=10,
+                                validators=[MinValueValidator(limit_value=1.00)])
+    amount = models.PositiveSmallIntegerField(default=1)
+    car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        abstract = True
