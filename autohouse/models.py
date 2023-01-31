@@ -1,7 +1,13 @@
 from django.db import models
 from django_countries.fields import CountryField
 
-from main.models import CommonCarInfo, CommonDiscount, CommonInfo
+from main.models import (
+    CommonCarInfo,
+    CommonDiscount,
+    CommonInfo,
+    PurchaseHistory
+)
+from supplier.models import Supplier
 
 from .schemas import EnumSchemas
 from .validators import CharacteristicJSONValidationSchema
@@ -24,3 +30,8 @@ class AutohouseDiscount(CommonDiscount):
 
 class AutohouseCar(CommonCarInfo):
     autohouse = models.ForeignKey(Autohouse, on_delete=models.SET_NULL, null=True)
+    amount = models.PositiveSmallIntegerField(default=1)
+
+
+class AutoHouseSupplierPurchaseHistory(PurchaseHistory):
+    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True)

@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
-from django.core.validators import MinValueValidator, MaxValueValidator
+
+from .utils import Util as main_util
 
 
 class CommonInfo(models.Model):
@@ -12,7 +12,6 @@ class CommonInfo(models.Model):
 
     class Meta:
         abstract = True
-
 
 
 class CommonCarInfo(CommonInfo):
@@ -37,7 +36,7 @@ class CommonDiscount(CommonInfo):
     title = models.CharField(max_length=255, null=True)
     description = models.TextField(null=True)
     start_date = models.DateTimeField(default=timezone.now)
-    end_date = models.DateTimeField(default=timezone.now() + timedelta(days=7))
+    end_date = models.DateTimeField(default=main_util.default_end_date)
 
     class Meta:
         abstract = True
@@ -54,7 +53,7 @@ class Car(CommonInfo):
     horse_power = models.PositiveSmallIntegerField()
     color = models.CharField(max_length=50)
     year_of_issue = models.PositiveSmallIntegerField(validators=[
-        MinValueValidator(1800), MaxValueValidator(datetime.now().year)
+        MinValueValidator(1800), MaxValueValidator(main_util.current_year)
     ], help_text="Use <YYYY> as date format")
     transmission_type = models.CharField(
         choices=TRANSMISSION_CHOICES, max_length=50
@@ -65,3 +64,14 @@ class Car(CommonInfo):
 
     def __str__(self):
         return '{} | {}'.format(self.brand, self.model)
+
+
+class PurchaseHistory(CommonInfo):
+    autohouse = models.ForeignKey('autohouse.Autohouse', on_delete=models.SET_NULL, null=True)
+    price = models.DecimalField(decimal_places=2, max_digits=10,
+                                validators=[MinValueValidator(limit_value=1.00)])
+    amount = models.PositiveSmallIntegerField(default=1)
+    car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        abstract = True
