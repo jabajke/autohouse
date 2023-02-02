@@ -11,6 +11,8 @@ psycopg2 = "*"
 psycopg2-binary = "*"
 django-countries = "*"
 jsonschema = "*"
+celery = "*"
+redis = "*"
 
 [dev-packages]
 flake8 = "*"
