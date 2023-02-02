@@ -26,4 +26,4 @@ class Supplier(CommonInfo):
 
 
 class SupplierDiscount(CommonDiscount):
-    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True)
+    supplier_car = models.ForeignKey(SupplierCar, on_delete=models.SET_NULL, null=True)
