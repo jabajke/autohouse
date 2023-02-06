@@ -19,6 +19,5 @@ class EnumSchemas(enum.Enum):
             },
             "transmission_type": {"type": "string"},
             "body-type": {"type": "string"},
-            "price": {"type": "number"},
         },
     }
