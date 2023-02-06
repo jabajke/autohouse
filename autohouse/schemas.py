@@ -18,6 +18,6 @@ class EnumSchemas(enum.Enum):
                 "minimum": 1800,
             },
             "transmission_type": {"type": "string"},
-            "body-type": {"type": "string"},
+            "body_type": {"type": "string"},
         },
     }
