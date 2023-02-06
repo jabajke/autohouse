@@ -25,7 +25,7 @@ class Autohouse(CommonInfo):
 
 
 class AutohouseDiscount(CommonDiscount):
-    autohouse = models.ForeignKey(Autohouse, on_delete=models.SET_NULL, null=True)
+    autohouse_car = models.ForeignKey('AutohouseCar', on_delete=models.SET_NULL, null=True)
 
 
 class AutohouseCar(CommonCarInfo):

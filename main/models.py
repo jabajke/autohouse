@@ -25,7 +25,6 @@ class CommonCarInfo(CommonInfo):
 
 
 class CommonDiscount(CommonInfo):
-    car = models.ForeignKey('main.Car', on_delete=models.SET_NULL, null=True)
     discount = models.DecimalField(
         default=0, decimal_places=2, max_digits=5,
         validators=[
@@ -59,11 +58,22 @@ class Car(CommonInfo):
         choices=TRANSMISSION_CHOICES, max_length=50
     )
     body_type = models.CharField(max_length=50)
-    price = models.DecimalField(decimal_places=2, max_digits=10,
-                                validators=[MinValueValidator(limit_value=1.00)])
 
     def __str__(self):
         return '{} | {}'.format(self.brand, self.model)
+
+    @property
+    def get_data(self):
+        data = {
+            "brand": self.brand,
+            "model": self.model,
+            "horse_power": self.horse_power,
+            "color": self.color,
+            "year_of_issue": self.year_of_issue,
+            "transmission_type": self.transmission_type,
+            "body_type": self.body_type
+        }
+        return data
 
 
 class PurchaseHistory(CommonInfo):

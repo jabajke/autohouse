@@ -16,6 +16,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
     restart: always
 
   db:
@@ -39,6 +40,21 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+
+  celery:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    restart: always
+    command: celery -A core worker -l INFO
+    env_file:
+      - .env
+    depends_on:
+      - web
+      - redis
+      - db
+  redis:
+    image: "redis:alpine"
 
 
 volumes:
