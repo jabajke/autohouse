@@ -1,12 +1,9 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 from django_countries.fields import CountryField
 
-from main.models import (
-    CommonCarInfo,
-    CommonDiscount,
-    CommonInfo,
-    PurchaseHistory
-)
+from main.models import (CommonCarInfo, CommonDiscount, CommonInfo,
+                         PurchaseHistory)
 from supplier.models import Supplier
 
 from .schemas import EnumSchemas
@@ -19,6 +16,12 @@ class Autohouse(CommonInfo):
     prefer_characteristic = models.JSONField(validators=[CharacteristicJSONValidationSchema(
         limit_value=EnumSchemas.CHARACTERISTIC_SCHEMA.value
     )], null=True)
+    balance = models.DecimalField(
+        default=0,
+        decimal_places=2,
+        max_digits=10,
+        validators=[MinValueValidator(limit_value=0.01)]
+    )
 
     def __str__(self):
         return self.title
