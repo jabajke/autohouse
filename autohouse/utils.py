@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from main.models import Car
 
 
@@ -10,25 +12,22 @@ class Util:
                     'value')})
         else:
             hp_filter = cars.filter(horse_power=horse_power.get('value'))
-
         if not year_of_issue.get('actions') == 'eq':
             years_filter = hp_filter.filter(
                 **{f'year_of_issue__{year_of_issue.get("actions")}': year_of_issue.get('value')})
         else:
             years_filter = hp_filter.filter(year_of_issue=year_of_issue.get('value'))
-
         return years_filter
 
     @classmethod
-    def concatenate_json(cls, characteristic):
-        cars = Car.objects.filter(
-            brand=characteristic.get('brand'),
-            model=characteristic.get('model'),
-            color__in=characteristic.get('color'),
-            transmission_type=characteristic.get('transmission_type'),
-            body_type=characteristic.get('body_type'),
-            is_active=True
-        )
-        horse_power = characteristic['horse_power']
-        year_of_issue = characteristic['year_of_issue']
+    def prefer_cars(cls, characteristic):
+        horse_power = characteristic.pop('horse_power')
+        year_of_issue = characteristic.pop('year_of_issue')
+        final_characteristic = dict()
+        for key, value in characteristic.items():
+            if isinstance(value, Iterable):
+                final_characteristic.update({f'{key}__in': value})
+            else:
+                final_characteristic.update({key: value})
+        cars = Car.objects.filter(**final_characteristic, is_active=True)
         return cls.filter_by_years_hp(cars, horse_power=horse_power, year_of_issue=year_of_issue)
