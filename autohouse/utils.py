@@ -1,5 +1,3 @@
-from collections.abc import Iterable
-
 from main.models import Car
 
 
@@ -25,7 +23,7 @@ class Util:
         year_of_issue = characteristic.pop('year_of_issue')
         final_characteristic = dict()
         for key, value in characteristic.items():
-            if isinstance(value, Iterable):
+            if isinstance(value, list) and '__in' not in key:
                 final_characteristic.update({f'{key}__in': value})
             else:
                 final_characteristic.update({key: value})
