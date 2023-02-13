@@ -46,13 +46,14 @@ services:
     volumes:
       - .:/usr/src/app
     restart: always
-    command: celery -A core worker -l INFO
+    command: celery -A core worker -l INFO -B
     env_file:
       - .env
     depends_on:
       - web
       - redis
       - db
+
   redis:
     image: "redis:alpine"
 

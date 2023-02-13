@@ -18,7 +18,7 @@ class CommonCarInfo(CommonInfo):
     car = models.ForeignKey('main.Car', on_delete=models.SET_NULL, null=True)
     supplier = models.ForeignKey('supplier.Supplier', on_delete=models.SET_NULL, null=True)
     price = models.DecimalField(decimal_places=2, max_digits=10,
-                                validators=[MinValueValidator(limit_value=1.00)])
+                                validators=[MinValueValidator(limit_value=1.00)], null=True)
 
     class Meta:
         abstract = True

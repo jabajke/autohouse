@@ -198,7 +198,12 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND")
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE = {
+    'buy_every_10_minutes': {
+        'task': 'autohouse.tasks.autohouse_buying',
+        'schedule': crontab(minute='*/10')
+    }
+}
 
 # debug-toolbar
 DEBUG_TOOLBAR_PANELS = [
