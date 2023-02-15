@@ -54,6 +54,19 @@ services:
       - redis
       - db
 
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+    container_name: tests
+    volumes:
+      - .:/usr/src/app/tests
+    depends_on:
+      - db
+      - web
+    env_file:
+      - .env
+
   redis:
     image: "redis:alpine"
 
