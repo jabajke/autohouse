@@ -11,6 +11,7 @@ class OfferViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
     GenericViewSet
 ):
 
@@ -19,6 +20,6 @@ class OfferViewSet(
     permission_classes = (IsAuthenticated,)
 
     def list(self, request, *args, **kwargs):
-        qs = self.get_queryset().filter(is_active=True)
+        qs = self.get_queryset().filter(is_active=True, customer__user=request.user)
         serializer = self.get_serializer(qs, many=True)
         return Response(data=serializer.data)

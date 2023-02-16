@@ -13,10 +13,16 @@ class OfferSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        customer = Customer.objects.get(user=self.context['request'].user, is_active=True)
-        if customer.balance < attrs.get('price'):
-            raise serializers.ValidationError('Current balance is lower than price')
+        offer = Offer.objects.filter(**attrs, is_active=True, customer__user=self.context['request'].user)
+        if offer.exists():
+            raise serializers.ValidationError('You already have such offer')
         return attrs
+
+    def validate_price(self, price):
+        customer = Customer.objects.get(user=self.context['request'].user, is_active=True)
+        if customer.balance < price:
+            raise serializers.ValidationError('Current balance is lower than price')
+        return price
 
     def create(self, validated_data):
         user = self.context['request'].user
