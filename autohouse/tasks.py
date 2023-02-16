@@ -3,7 +3,8 @@ from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
 
-from autohouse.models import Autohouse, AutohouseCar
+from autohouse.models import (Autohouse, AutohouseCar,
+                              AutoHouseSupplierPurchaseHistory)
 from autohouse.utils import Util as autohouse_util
 from supplier.models import SupplierCar, SupplierDiscount
 
@@ -73,6 +74,12 @@ def deal_with_supplier(choice, autohouse):
     autohouse_car.save()
     supplier.balance += price
     supplier.save()
+    AutoHouseSupplierPurchaseHistory.objects.create(
+        supplier=supplier,
+        autohouse=autohouse,
+        car=autohouse_car.car,
+        price=autohouse_car.price
+    )
 
 
 @shared_task
