@@ -1,6 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -42,7 +43,7 @@ def test_user_login_fail(wrong_user_fixture, payload_fixture):
         email=wrong_user_fixture.email,
         password=payload_fixture['password']
     ))
-    assert response.status_code == 401
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db
@@ -53,4 +54,4 @@ def test_user_logout(correct_user_fixture):
         {'refresh': str(refresh)},
         HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}'
     )
-    assert response.status_code == 204
+    assert response.status_code == status.HTTP_204_NO_CONTENT
