@@ -17,6 +17,7 @@ cryptography==39.0.1
 defusedxml==0.7.1
 Django==4.0
 django-countries==7.5.1
+django-filter==22.1
 django-templated-mail==1.1.1
 django_debug_toolbar==3.8.1
 djangorestframework==3.13.0
@@ -61,7 +62,7 @@ social-auth-app-django==4.0.0
 social-auth-core==4.3.0
 sqlparse==0.4.3
 tomli==2.0.1
-typing_extensions==4.4.0
+typing_extensions==4.5.0
 uritemplate==4.1.1
 urllib3==1.26.14
 vine==5.0.0
