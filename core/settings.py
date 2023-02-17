@@ -202,6 +202,10 @@ CELERY_BEAT_SCHEDULE = {
     'buy_every_10_minutes': {
         'task': 'autohouse.tasks.autohouse_buying',
         'schedule': crontab(minute='*/10')
+    },
+    'buy_every_20_mintes': {
+        'task': 'customer.tasks.offer_task',
+        'schedule': crontab(minute='*/20')
     }
 }
 
