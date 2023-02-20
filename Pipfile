@@ -13,6 +13,8 @@ django-countries = "*"
 jsonschema = "*"
 celery = "*"
 redis = "*"
+pytest = "*"
+pytest-django = "*"
 
 [dev-packages]
 flake8 = "*"
