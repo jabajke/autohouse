@@ -1,9 +1,18 @@
+import os
+import pathlib
+
 from celery import shared_task
 from django.db.models import F
+from loguru import logger
 
 from autohouse.models import AutohouseCar, AutohouseDiscount
 from autohouse.tasks import get_cheapest_car
 from customer.models import CustomerPurchaseHistory, Offer
+
+current_folder = os.path.dirname(pathlib.Path(__file__).resolve())
+target_folder = os.path.join(current_folder, 'logs')
+logger.add(os.path.join(target_folder, 'info.log'), format='{time} {level} {message}',
+           level='INFO', rotation='10:00', compression='zip')
 
 
 def successful_offer_update(offer, car):
@@ -17,40 +26,40 @@ def successful_offer_update(offer, car):
 @shared_task
 def offer_task():
     cheapest_cars = []
-    for offer in Offer.objects.filter(is_active=True):
-        suitable_autohouse_car = AutohouseCar.objects.filter(
-            **offer.update_keys('car__'),
-            price__lte=offer.price,
-            is_active=True
-        )
-        try:
-            min_default_price = suitable_autohouse_car.order_by('price')[0]
-            cheapest_cars.append(min_default_price)
-        except IndexError:
-            continue
-        discount_cars = AutohouseDiscount.objects.filter(
-            **offer.update_keys('autohouse_car__car__'),
-            autohouse_car__price__lte=offer.price,
-            is_active=True
-        )
-        try:
-            min_discount_price = (
-                discount_cars
-                .annotate(
-                    price=(F('autohouse_car__price') * ((100 - F('discount')) / 100))
-                )
-                .order_by('price'))[0]
-            cheapest_cars.append(min_discount_price)
-        except IndexError:
-            pass
-        cheapest_car = get_cheapest_car(cheapest_cars)
-        if cheapest_car:
-            successful_offer_update(offer, cheapest_car)
-            history, created = CustomerPurchaseHistory.objects.get_or_create(
-                customer=offer.customer,
-                price=cheapest_car.price,
-                car=cheapest_car.car
+    offers = Offer.objects.filter(is_active=True)
+    if offers.exists():
+        for offer in offers:
+            suitable_autohouse_car = AutohouseCar.objects.filter(
+                **offer.update_keys('car__'),
+                price__lte=offer.price,
+                is_active=True
             )
-            if not created:
-                history.amount += 1
-                history.save()
+            cheapest_default_car = suitable_autohouse_car.order_by('price').first()
+            if not cheapest_default_car:
+                logger.info('There is no car for {}'.format(offer))
+                continue
+            cheapest_cars.append(cheapest_default_car)
+            discount_cars = AutohouseDiscount.objects.filter(
+                **offer.update_keys('autohouse_car__car__'),
+                autohouse_car__price__lte=offer.price,
+                is_active=True
+            )
+            if discount_cars.exists():
+                min_discount_price = (
+                    discount_cars
+                    .annotate(
+                        price=(F('autohouse_car__price') * ((100 - F('discount')) / 100))
+                    )
+                    .order_by('price')).first()
+                cheapest_cars.append(min_discount_price)
+            if len(cheapest_cars) > 0:
+                cheapest_car = get_cheapest_car(cheapest_cars)
+                successful_offer_update(offer, cheapest_car)
+                history, created = CustomerPurchaseHistory.objects.get_or_create(
+                    customer=offer.customer,
+                    price=cheapest_car.price,
+                    car=cheapest_car.car
+                )
+                if not created:
+                    history.amount += 1
+                    history.save()
