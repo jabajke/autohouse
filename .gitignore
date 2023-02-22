@@ -2,6 +2,7 @@
 __pycache__/
 .env
 postgres_data
+logs/
 .coverage
 .pytest_cache
 celerybeat-schedule
