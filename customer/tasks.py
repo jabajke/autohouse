@@ -13,7 +13,6 @@ def successful_offer_update(offer, car):
     offer.is_active = False
     offer.is_completed = True
     offer.customer.balance -= car.price
-    offer.customer.full_clean()
     offer.customer.save()
     offer.save()
 
