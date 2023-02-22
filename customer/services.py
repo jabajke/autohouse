@@ -20,8 +20,10 @@ class CustomerService:
             money_spent=history
             .annotate(total_price=Sum('price') * F('amount'))
             .aggregate(total=Sum('total_price'))['total'],
-            lovely_brand=history.annotate(brand_count=Count('car__brand'))
-            .order_by('brand_count').first().car.brand
+            lovely_brand=history.values('car__brand')
+            .annotate(brand_count=Count('car__brand'))
+            .order_by('-brand_count')
+            .first()['car__brand']
         )
         return data
 

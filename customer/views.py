@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from .models import Offer
-from .serializers import OfferSerializer
+from .models import Customer, Offer
+from .serializers import CustomerSerializer, OfferSerializer
 from .services import CustomerService
 
 
@@ -31,6 +31,8 @@ class OwnStatisticViewSet(
     mixins.ListModelMixin,
     GenericViewSet
 ):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
     permission_classes = (IsAuthenticated,)
     service = CustomerService()
 

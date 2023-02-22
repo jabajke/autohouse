@@ -40,3 +40,9 @@ class OfferSerializer(serializers.ModelSerializer):
         instance.price = validated_data.get('price')
         instance.save()
         return instance
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        exclude = ('is_active', 'updated_at', 'created_at')
