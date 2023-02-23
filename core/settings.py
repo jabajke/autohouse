@@ -158,8 +158,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.OrderingFilter',
-        'rest_framework.filters.SearchFilter'
     )
 }
 
@@ -209,7 +207,7 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'autohouse.tasks.autohouse_buying',
         'schedule': crontab(minute='*/10')
     },
-    'buy_every_20_mintes': {
+    'buy_every_20_minutes': {
         'task': 'customer.tasks.offer_task',
         'schedule': crontab(minute='*/20')
     }
