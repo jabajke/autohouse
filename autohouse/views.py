@@ -28,3 +28,15 @@ class AutohouseStatisticViewSet(
     def retrieve(self, request, *args, **kwargs):
         data = self.service.autohouse_statistic(self.get_object())
         return Response(data)
+
+
+class GeneralAutohouseStatisticViewSet(
+    mixins.ListModelMixin,
+    GenericViewSet
+):
+    queryset = Autohouse.objects.all()
+    service = AutohouseService()
+
+    def list(self, request, *args, **kwargs):
+        data = self.service.general_statistic()
+        return Response(data)

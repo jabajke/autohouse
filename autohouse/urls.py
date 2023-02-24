@@ -1,12 +1,14 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import AutohouseCarStatisticViewSet, AutohouseStatisticViewSet
+from .views import (AutohouseCarStatisticViewSet, AutohouseStatisticViewSet,
+                    GeneralAutohouseStatisticViewSet)
 
 router = routers.DefaultRouter()
-router.register('statistic/cars', AutohouseCarStatisticViewSet)
-router.register('statistic/autohouse', AutohouseStatisticViewSet)
+router.register('cars', AutohouseCarStatisticViewSet)
+router.register('autohouse', AutohouseStatisticViewSet)
+router.register('general-statistic', GeneralAutohouseStatisticViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('statistic/', include(router.urls))
 ]
