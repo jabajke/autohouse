@@ -22,6 +22,7 @@ flake8-import-order = "*"
 flake8-isort = "*"
 django-debug-toolbar = "*"
 drf-spectacular = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.10"
