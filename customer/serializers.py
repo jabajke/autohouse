@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from rest_framework import serializers
 
 from .models import Customer, Offer
@@ -20,8 +21,10 @@ class OfferSerializer(serializers.ModelSerializer):
 
     def validate_price(self, price):
         customer = Customer.objects.get(user=self.context['request'].user, is_active=True)
-        if customer.balance < price:
-            raise serializers.ValidationError('Current balance is lower than price')
+        offers = Offer.objects.filter(customer=customer, is_active=True)
+        total = offers.annotate(summary=Sum('price')).aggregate(total=Sum('summary'))
+        if total.get('total') > customer.balance:
+            raise serializers.ValidationError('Total price of your offers is greater than your balance')
         return price
 
     def create(self, validated_data):
@@ -37,3 +40,9 @@ class OfferSerializer(serializers.ModelSerializer):
         instance.price = validated_data.get('price')
         instance.save()
         return instance
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        exclude = ('is_active', 'updated_at', 'created_at')
