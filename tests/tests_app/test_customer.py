@@ -59,6 +59,15 @@ def test_get_offer(
 
 
 @pytest.mark.django_db
+def test_offer_list(logged_in_user, offer_fixture):
+    response = client.get(
+        reverse('offer-list'),
+        HTTP_AUTHORIZATION=f'Bearer {logged_in_user.get("access")}'
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
 def test_update_offer(
         logged_in_user,
         offer_fixture
@@ -73,5 +82,13 @@ def test_update_offer(
         format='json',
         HTTP_AUTHORIZATION=f'Bearer {logged_in_user.get("access")}'
     )
+    assert response.status_code == status.HTTP_200_OK
 
+
+@pytest.mark.django_db
+def test_get_own_statistic(logged_in_user, customer_fixture):
+    response = client.get(
+        reverse('statistic-list'),
+        HTTP_AUTHORIZATION=f'Bearer {logged_in_user.get("access")}'
+    )
     assert response.status_code == status.HTTP_200_OK
