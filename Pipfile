@@ -15,6 +15,7 @@ celery = "*"
 redis = "*"
 pytest = "*"
 pytest-django = "*"
+django-filter = "*"
 
 [dev-packages]
 flake8 = "*"

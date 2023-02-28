@@ -1,6 +1,3 @@
-import os
-import pathlib
-
 from celery import shared_task
 from django.db.models import F
 from loguru import logger
@@ -9,17 +6,14 @@ from autohouse.models import AutohouseCar, AutohouseDiscount
 from autohouse.tasks import get_cheapest_car
 from customer.models import CustomerPurchaseHistory, Offer
 
-current_folder = os.path.dirname(pathlib.Path(__file__).resolve())
-target_folder = os.path.join(current_folder, 'logs')
-logger.add(os.path.join(target_folder, 'info.log'), format='{time} {level} {message}',
-           level='INFO', rotation='10:00', compression='zip')
-
 
 def successful_offer_update(offer, car):
     offer.car = car.car
     offer.price = car.price
     offer.is_active = False
     offer.is_completed = True
+    offer.customer.balance -= car.price
+    offer.customer.save()
     offer.save()
 
 
@@ -63,3 +57,5 @@ def offer_task():
                 if not created:
                     history.amount += 1
                     history.save()
+    else:
+        logger.info('No active offers')

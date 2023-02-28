@@ -1,6 +1,3 @@
-import os
-import pathlib
-
 from celery import shared_task
 from django.db import transaction
 from django.db.models import F
@@ -11,11 +8,6 @@ from autohouse.models import (Autohouse, AutohouseCar,
                               AutoHouseSupplierPurchaseHistory)
 from autohouse.utils import Util as autohouse_util
 from supplier.models import SupplierCar, SupplierDiscount
-
-current_folder = os.path.dirname(pathlib.Path(__file__).resolve())
-target_folder = os.path.join(current_folder, 'logs')
-logger.add(os.path.join(target_folder, 'info.log'), format='{time} {level} {message}',
-           level='INFO', rotation='10:00', compression='zip')
 
 
 def get_cheapest_car(cars):
