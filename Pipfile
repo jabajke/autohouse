@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==4.0"
+djangorestframework = "==3.13"
+djoser = "*"
+psycopg2 = "*"
+psycopg2-binary = "*"
+django-countries = "*"
+jsonschema = "*"
+celery = "*"
+redis = "*"
+pytest = "*"
+pytest-django = "*"
+gunicorn = "*"
+django-filter = "*"
+
+[dev-packages]
+flake8 = "*"
+flake8-import-order = "*"
+flake8-isort = "*"
+django-debug-toolbar = "*"
+drf-spectacular = "*"
+coverage = "*"
+loguru = "*"
+
+[requires]
+python_version = "3.10"

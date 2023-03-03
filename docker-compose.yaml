@@ -1,0 +1,85 @@
+version: "3"
+
+services:
+
+  web:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    container_name: "web"
+    expose:
+      - 8000
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  db:
+    image: "postgres"
+    container_name: pgdb
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    logging:
+      driver: 'none'
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  celery:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    restart: always
+    command: celery -A core worker -l INFO -B
+    env_file:
+      - .env
+    depends_on:
+      - web
+      - redis
+      - db
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+    container_name: tests
+    volumes:
+      - .:/usr/src/app/tests
+    depends_on:
+      - db
+      - web
+    env_file:
+      - .env
+
+  redis:
+    image: "redis:alpine"
+
+  nginx:
+    build: ./nginx
+    container_name: nginx_autohouse
+    ports:
+      - "8000:80"
+    volumes:
+      - ./static:/static
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - web
+      - db
+    restart: always
+
+
+volumes:
+  pgdata:
