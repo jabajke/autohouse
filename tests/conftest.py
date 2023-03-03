@@ -2,13 +2,15 @@ import pytest
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from autohouse.models import (Autohouse, AutohouseCar,
+from autohouse.models import (Autohouse, AutohouseCar, AutohouseDiscount,
                               AutoHouseSupplierPurchaseHistory)
 from customer.models import Customer, CustomerPurchaseHistory, Offer
 from main.models import Car
-from supplier.models import Supplier
+from supplier.models import Supplier, SupplierCar, SupplierDiscount
 
 User = get_user_model()
+
+pytest_plugins = ('celery.contrib.pytest',)
 
 
 @pytest.fixture
@@ -85,10 +87,12 @@ def customer_purchase_history_fixture(customer_fixture):
 def car_fixture(prefer_car_correct_fixture):
     horse_power = prefer_car_correct_fixture.pop('horse_power').get('value')
     year_of_issue = prefer_car_correct_fixture.pop('year_of_issue').get('value')
+    color = prefer_car_correct_fixture.pop('color')[0]
     car = Car.objects.create(
         **prefer_car_correct_fixture,
         horse_power=horse_power,
-        year_of_issue=year_of_issue
+        year_of_issue=year_of_issue,
+        color=color
     )
     return car
 
@@ -142,3 +146,34 @@ def autohouse_purchase_history_fixture(
         price=100.0
     )
     return history
+
+
+@pytest.fixture
+def supplier_car_fixture(car_fixture, supplier_fixture):
+    supplier_car = SupplierCar.objects.create(
+        supplier=supplier_fixture,
+        car=car_fixture,
+        price=100.00
+    )
+    return supplier_car
+
+
+@pytest.fixture
+def supplier_discount_fixture(supplier_car_fixture, supplier_fixture):
+    discount = SupplierDiscount.objects.create(
+        supplier_car=supplier_car_fixture,
+        title='FooTitleDiscount',
+        discount=99.00
+    )
+    return discount
+
+
+@pytest.fixture
+def autohouse_discount_fixture(
+        autohouse_car_fixture
+):
+    discount = AutohouseDiscount.objects.create(
+        autohouse_car=autohouse_car_fixture,
+        discount=99
+    )
+    return discount
