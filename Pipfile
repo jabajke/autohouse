@@ -15,6 +15,7 @@ celery = "*"
 redis = "*"
 pytest = "*"
 pytest-django = "*"
+gunicorn = "*"
 django-filter = "*"
 
 [dev-packages]
