@@ -44,16 +44,21 @@ def best_proposition(cars, autohouse):
 
 @transaction.atomic
 def deal_with_supplier(choice, autohouse):
-    price = choice.get('price')
-    supplier = choice.get('supplier')
+    if isinstance(choice, SupplierDiscount):
+        supplier = choice.supplier_car.supplier
+        car = choice.supplier_car.car
+    else:
+        supplier = choice.supplier
+        car = choice.car
+    price = choice.price.normalize()
     autohouse.balance -= price
     autohouse.full_clean()
     autohouse.save()
     autohouse_car, created = AutohouseCar.objects.get_or_create(
         autohouse=autohouse,
-        car=choice['car'],
+        car=car,
     )
-    if not created and autohouse_car.supplier == choice.get('supplier'):
+    if not created and autohouse_car.supplier == supplier:
         autohouse_car.amount += 1
     else:
         autohouse_car.price = price
@@ -65,7 +70,7 @@ def deal_with_supplier(choice, autohouse):
         supplier=supplier,
         autohouse=autohouse,
         car=autohouse_car.car,
-        price=autohouse_car.price
+        price=price
     )
 
 

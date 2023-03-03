@@ -22,8 +22,9 @@ class OfferSerializer(serializers.ModelSerializer):
     def validate_price(self, price):
         customer = Customer.objects.get(user=self.context['request'].user, is_active=True)
         offers = Offer.objects.filter(customer=customer, is_active=True)
-        total = offers.annotate(summary=Sum('price')).aggregate(total=Sum('summary'))
-        if total.get('total') > customer.balance:
+        total = offers.annotate(summary=Sum('price')).aggregate(total=Sum('summary'))['total']
+        total = total + price if total is not None else price
+        if total > customer.balance:
             raise serializers.ValidationError('Total price of your offers is greater than your balance')
         return price
 

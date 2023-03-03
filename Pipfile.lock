@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b08a51d00f5ef76a806ff165849621cd79b34d421163102d2ece3d961591a0a5"
+            "sha256": "dd83ebeaf8e111a5b92b42ad8f3ca90bb31554310eeff3951c061270d3f2ac49"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -15,6 +15,7 @@
             }
         ]
     },
+
     "default": {
         "amqp": {
             "hashes": [

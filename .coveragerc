@@ -1,0 +1,12 @@
+[run]
+
+omit =
+    tests.py test_*.py
+    */migrations/*
+source =
+    authentication
+    autohouse
+    core
+    customer
+    main
+    supplier

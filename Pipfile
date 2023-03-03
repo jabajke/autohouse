@@ -23,6 +23,7 @@ flake8-import-order = "*"
 flake8-isort = "*"
 django-debug-toolbar = "*"
 drf-spectacular = "*"
+coverage = "*"
 loguru = "*"
 
 [requires]

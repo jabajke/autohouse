@@ -55,3 +55,4 @@ def test_user_logout(correct_user_fixture):
         HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}'
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
+
