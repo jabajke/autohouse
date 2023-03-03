@@ -1,6 +1,3 @@
-import os
-import pathlib
-
 from celery import shared_task
 from django.db import transaction
 from django.db.models import F
@@ -11,11 +8,6 @@ from autohouse.models import (Autohouse, AutohouseCar,
                               AutoHouseSupplierPurchaseHistory)
 from autohouse.utils import Util as autohouse_util
 from supplier.models import SupplierCar, SupplierDiscount
-
-current_folder = os.path.dirname(pathlib.Path(__file__).resolve())
-target_folder = os.path.join(current_folder, 'logs')
-logger.add(os.path.join(target_folder, 'info.log'), format='{time} {level} {message}',
-           level='INFO', rotation='10:00', compression='zip')
 
 
 def get_cheapest_car(cars):
@@ -52,16 +44,21 @@ def best_proposition(cars, autohouse):
 
 @transaction.atomic
 def deal_with_supplier(choice, autohouse):
-    price = choice.get('price')
-    supplier = choice.get('supplier')
+    if isinstance(choice, SupplierDiscount):
+        supplier = choice.supplier_car.supplier
+        car = choice.supplier_car.car
+    else:
+        supplier = choice.supplier
+        car = choice.car
+    price = choice.price.normalize()
     autohouse.balance -= price
     autohouse.full_clean()
     autohouse.save()
     autohouse_car, created = AutohouseCar.objects.get_or_create(
         autohouse=autohouse,
-        car=choice['car'],
+        car=car,
     )
-    if not created and autohouse_car.supplier == choice.get('supplier'):
+    if not created and autohouse_car.supplier == supplier:
         autohouse_car.amount += 1
     else:
         autohouse_car.price = price
@@ -73,7 +70,7 @@ def deal_with_supplier(choice, autohouse):
         supplier=supplier,
         autohouse=autohouse,
         car=autohouse_car.car,
-        price=autohouse_car.price
+        price=price
     )
 
 

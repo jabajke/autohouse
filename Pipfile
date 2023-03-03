@@ -16,6 +16,7 @@ redis = "*"
 pytest = "*"
 pytest-django = "*"
 gunicorn = "*"
+django-filter = "*"
 
 [dev-packages]
 flake8 = "*"
@@ -23,6 +24,7 @@ flake8-import-order = "*"
 flake8-isort = "*"
 django-debug-toolbar = "*"
 drf-spectacular = "*"
+coverage = "*"
 loguru = "*"
 
 [requires]

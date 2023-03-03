@@ -2,6 +2,7 @@
     "_meta": {
         "hash": {
             "sha256": "15ad363a2e3f81e2e637a534044809050a5f7d9e25c047eee91ebf82b7a985a4"
+            "sha256": "dd83ebeaf8e111a5b92b42ad8f3ca90bb31554310eeff3951c061270d3f2ac49"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -15,6 +16,7 @@
             }
         ]
     },
+
     "default": {
         "amqp": {
             "hashes": [
@@ -329,6 +331,14 @@
             ],
             "index": "pypi",
             "version": "==7.5.1"
+        },
+        "django-filter": {
+            "hashes": [
+                "sha256:ed429e34760127e3520a67f415bec4c905d4649fbe45d0d6da37e6ff5e0287eb",
+                "sha256:ed473b76e84f7e83b2511bb2050c3efb36d135207d0128dfe3ae4b36e3594ba5"
+            ],
+            "index": "pypi",
+            "version": "==22.1"
         },
         "django-templated-mail": {
             "hashes": [

@@ -1,6 +1,3 @@
-import os
-import pathlib
-
 from celery import shared_task
 from django.db.models import F
 from loguru import logger
@@ -9,18 +6,22 @@ from autohouse.models import AutohouseCar, AutohouseDiscount
 from autohouse.tasks import get_cheapest_car
 from customer.models import CustomerPurchaseHistory, Offer
 
-current_folder = os.path.dirname(pathlib.Path(__file__).resolve())
-target_folder = os.path.join(current_folder, 'logs')
-logger.add(os.path.join(target_folder, 'info.log'), format='{time} {level} {message}',
-           level='INFO', rotation='10:00', compression='zip')
 
-
-def successful_offer_update(offer, car):
-    offer.car = car.car
-    offer.price = car.price
+def offer_update(offer, cheapest_car):
+    if isinstance(cheapest_car, AutohouseDiscount):
+        car = cheapest_car.autohouse_car.car
+        autohouse = cheapest_car.autohouse_car.autohouse
+    else:
+        car = cheapest_car.car
+        autohouse = cheapest_car.autohouse
+    offer.car = car
+    offer.price = cheapest_car.price
     offer.is_active = False
     offer.is_completed = True
+    offer.customer.balance -= cheapest_car.price
+    offer.customer.save()
     offer.save()
+    return car, autohouse
 
 
 @shared_task
@@ -54,12 +55,12 @@ def offer_task():
                 cheapest_cars.append(min_discount_price)
             if len(cheapest_cars) > 0:
                 cheapest_car = get_cheapest_car(cheapest_cars)
-                successful_offer_update(offer, cheapest_car)
-                history, created = CustomerPurchaseHistory.objects.get_or_create(
+                car, autohouse = offer_update(offer, cheapest_car)
+                CustomerPurchaseHistory.objects.create(
                     customer=offer.customer,
                     price=cheapest_car.price,
-                    car=cheapest_car.car
+                    car=car,
+                    autohouse=autohouse
                 )
-                if not created:
-                    history.amount += 1
-                    history.save()
+    else:
+        logger.info('No active offers')

@@ -9,7 +9,12 @@ from main.models import CommonInfo, PurchaseHistory
 
 class Customer(CommonInfo):
     user = models.OneToOneField(CustomUser, on_delete=models.SET_NULL, null=True)
-    balance = models.DecimalField(default=0, decimal_places=2, max_digits=10)
+    balance = models.DecimalField(
+        default=0,
+        decimal_places=2,
+        max_digits=10,
+        validators=[MinValueValidator(limit_value=0.00)]
+    )
 
 
 class CustomerPurchaseHistory(PurchaseHistory):
